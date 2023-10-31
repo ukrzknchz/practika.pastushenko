@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" >
+    <title>Add Student</title>
+    <style>
+        body{
+            background-color: #7502f86f;
+        }
+        h1{
+            text-align: center;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0;
+        }
+        td {
+            padding: 8px;
+            text-align: center;
+            border-bottom: 1px solid #5c5b5bc0;
+            width: 150px;
+        }
+        input[type="checkbox"] {
+            vertical-align: middle;
+            margin-right: 5px;
+        }
+        .input-search{
+            display: block;
+            margin: 0 auto;
+            width: 600px;
+            height: 2rem;
+            text-align: center;
+        }
+        .red {
+            color: red;
+        }
+        a {
+            cursor: pointer;
+        }
+        .addStudent{
+          display: flex;
+          justify-content: center;
+        }
+        .margin{
+          margin:0 10px 0 10px ;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+  </head>
+  <body>
+    <div id="app">
+      <h1>Пошук студентів</h1>
+      <input class="input-search" placeholder="Введіть ПІБ студента" v-model="search" >
+      <table>
+        <tr v-for="(student, index) in filteredStudents" :key="index">
+          <td :class="{ 'red': student.highlighted }">{{ student.name }}</td>
+          <td>
+            <input type="checkbox" v-model="student.workDone" >
+          </td>
+          <td>{{ student.group }}</td>
+          <td>{{ student.grade }}</td>
+          <td><a class="red" @click="deleteStudent(student.id)">Видалити</a></td>
+        </tr>
+      </table>
+      <div class="addStudent">
+        <input placeholder="ПІБ" v-model="newStudent.name" >
+        <input v-model="newStudent.workDone" type="checkbox" >
+        <select v-model="newStudent.group" id="myComboBox" name="group">
+          <option  value="placeholder" disabled selected>Група:</option>
+          <option value="РПЗ 20 1/9">РПЗ 20 1/9</option>
+          <option value="РПЗ 20 2/9">РПЗ 20 2/9</option>
+        </select>
+        <input class="margin" v-model="newStudent.grade" type="number" placeholder="Оцінка" >
+        <button @click="addStudent()">Додати</button>
+      </div>
+    </div>
+  </body>
+  <script>
+    var arrayStudents = [
+      {
+        id: 0,
+        name: "Пастушенко Олександр",
+        group: "РПЗ 20 1/9",
+        grade: "5",
+        workDone: true,
+      },
+      {
+        id: 1,
+        name: "Соломін Данило",
+        group: "РПЗ 20 1/9",
+        grade: "",
+        workDone: false,
+      },
+      {
+        id: 2,
+        name: "Адамчук Микола",
+        group: "РПЗ 20 1/9",
+        grade: "",
+        workDone: false,
+      },
+      {
+        id: 3,
+        name: "Бавтута Максим",
+        group: "РПЗ 20 1/9",
+        grade: "4",
+        workDone: true,
+      },
+      {
+        id: 4,
+        name: "Іванов Володимир",
+        group: "РПЗ 20 1/9",
+        grade: "5",
+        workDone: true,
+      },
+    ];
+
+    const newStudent = {
+      id: "",
+      name: "",
+      group: "",
+      grade: "",
+      workDone: false,
+    };
+    new Vue({
+      el: "#app",
+      data: {
+        students: arrayStudents,
+        search: "",
+        deleteLink: "",
+      },
+      computed: {
+        filteredStudents: function () {
+          const searchLower = this.search.toLowerCase();
+          return this.students.map((student) => ({
+            ...student,
+            highlighted:
+              student.name.toLowerCase().includes(searchLower) &&
+              searchLower.length > 0,
+          }));
+        },
+      },
+      methods: {
+        deleteStudent(id) {
+          const index = this.students.findIndex((student) => student.id === id);
+          if (index !== -1) {
+            this.students.splice(index, 1);
+          }
+        },
+        addStudent() {
+          newStudent.id = this.students.length + 1;
+          this.students.push({ ...newStudent });
+
+          newStudent.name = "";
+          newStudent.workDone = false;
+          newStudent.group = "";
+          newStudent.grade = "";
+        },
+      },
+    });
+  </script>
+</html>
